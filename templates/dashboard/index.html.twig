@@ -1,0 +1,47 @@
+{# templates/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome | Water Station Delivery{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="bg-blue-600 text-white py-20 px-4 text-center rounded-b-3xl">
+        <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-4">Fresh Water Delivered to Your Door</h1>
+        <p class="text-lg sm:text-xl font-light mb-8 max-w-2xl mx-auto">
+            Stay hydrated and healthy with our fast and reliable water delivery service. 
+            Order your refills and new containers with just a few clicks!
+        </p>
+        <a href="#products" class="bg-white text-blue-600 py-3 px-8 rounded-full font-semibold shadow-md hover:bg-gray-100 transition-colors duration-200">Order Now</a>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 px-4">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Products</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Product 1 -->
+                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
+                    <h3 class="text-2xl font-bold mb-2">Water Refill</h3>
+                    <p class="text-gray-600 mb-4">Pure, clean drinking water for your reusable gallons.</p>
+                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Add to Cart</button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
+                    <h3 class="text-2xl font-bold mb-2">New Gallon</h3>
+                    <p class="text-gray-600 mb-4">A brand new, durable gallon container filled with our pure water.</p>
+                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Add to Cart</button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
+                    <h3 class="text-2xl font-bold mb-2">Empty Container Pickup</h3>
+                    <p class="text-gray-600 mb-4">Schedule a pickup for your empty containers. We'll handle it!</p>
+                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Schedule Pickup</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
