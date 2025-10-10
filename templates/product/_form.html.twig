@@ -1,0 +1,23 @@
+{{ form_start(form) }}
+    <div class="mb-4">
+        {{ form_label(form.Name, 'Product Name', {'label_attr': {'class': 'block font-medium mb-1'}}) }}
+        {{ form_widget(form.Name, {'attr': {'class': 'w-full border rounded p-2'}}) }}
+        {{ form_errors(form.Name) }}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.stock, 'Stock Quantity', {'label_attr': {'class': 'block font-medium mb-1'}}) }}
+        {{ form_widget(form.stock, {'attr': {'class': 'w-full border rounded p-2'}}) }}
+        {{ form_errors(form.stock) }}
+    </div>
+
+    <div class="mb-4">
+        {{ form_label(form.price, 'Price', {'label_attr': {'class': 'block font-medium mb-1'}}) }}
+        {{ form_widget(form.price, {'attr': {'class': 'w-full border rounded p-2'}}) }}
+        {{ form_errors(form.price) }}
+    </div>
+
+    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+        {{ button_label|default('Save') }}
+    </button>
+{{ form_end(form) }}

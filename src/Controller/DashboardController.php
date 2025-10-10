@@ -1,39 +1,47 @@
 <?php
+
 namespace App\Controller;
 
+use App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController
 {
-    #[Route('/dashboard', name: 'app_dashboard')]
-    public function index(): Response
+    // Make both "/" and "/dashboard" go to the same page
+    #[Route('/', name: 'home')]
+    #[Route('/dashboard', name: 'dashboard')]
+    public function index(EntityManagerInterface $em): Response
     {
-        // Example data (replace with real DB queries later)
-        $orders = [
-            'new' => 18,
-            'scheduled' => 12,
-            'history_count' => 4523,
-        ];
+        // Check if there are products in the DB
+        $products = $em->getRepository(Product::class)->findAll();
 
-        $containers = [
-            'stock' => 320,
-            'issued' => 78,
-            'returned' => 46,
-            'damaged' => 5,
-        ];
+      // Optional: seed sample products if database is empty
+if (count($products) === 0) {
+    $sampleProducts = [
+        ['name' => 'Water Refill', 'price' => 25, 'stock' => 100, 'description' => 'For your reusable gallons'],
+        ['name' => 'New Gallon', 'price' => 150, 'stock' => 50, 'description' => 'A new, pre-filled container'],
+        ['name' => 'Empty Container Pickup', 'price' => 0, 'stock' => 999, 'description' => 'We’ll handle the return'],
+    ];
 
-        $reports = [
-            'sales_today' => 5800,
-            'sales_week' => 42000,
-            'customer_activity' => 1280,
-        ];
+    foreach ($sampleProducts as $p) {
+        $product = new Product();
+        $product->setName($p['name']);
+        $product->setPrice($p['price']);
+        $product->setStock($p['stock']);
+        $product->setDescription($p['description']);
+        $em->persist($product);
+    }
 
+    $em->flush();
+}
+
+
+        // Render the dashboard page
         return $this->render('dashboard/index.html.twig', [
-            'orders' => $orders,
-            'containers' => $containers,
-            'reports' => $reports,
+            'products' => $products,
         ]);
     }
 }

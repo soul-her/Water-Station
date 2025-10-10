@@ -1,47 +1,130 @@
-{# templates/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Welcome | Water Station Delivery{% endblock %}
-
 {% block body %}
-    <!-- Hero Section -->
-    <section class="bg-blue-600 text-white py-20 px-4 text-center rounded-b-3xl">
-        <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-4">Fresh Water Delivered to Your Door</h1>
-        <p class="text-lg sm:text-xl font-light mb-8 max-w-2xl mx-auto">
-            Stay hydrated and healthy with our fast and reliable water delivery service. 
-            Order your refills and new containers with just a few clicks!
-        </p>
-        <a href="#products" class="bg-white text-blue-600 py-3 px-8 rounded-full font-semibold shadow-md hover:bg-gray-100 transition-colors duration-200">Order Now</a>
-    </section>
+<header>
+    <h1>Touch Up</h1>
+    <nav>
+        <a href="{{ path('dashboard') }}">Home</a>
+        <a href="{{ path('cart_index') }}">Cart 🛒</a>
+    </nav>
+</header>
 
-    <!-- Products Section -->
-    <section id="products" class="py-16 px-4">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Our Products</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                
-                <!-- Product 1 -->
-                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
-                    <h3 class="text-2xl font-bold mb-2">Water Refill</h3>
-                    <p class="text-gray-600 mb-4">Pure, clean drinking water for your reusable gallons.</p>
-                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Add to Cart</button>
-                </div>
+<section class="hero">
+    <h2>Pure Water Delivered</h2>
+    <p>Seamless water delivery for a healthy and hydrated life.</p>
+</section>
 
-                <!-- Product 2 -->
-                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
-                    <h3 class="text-2xl font-bold mb-2">New Gallon</h3>
-                    <p class="text-gray-600 mb-4">A brand new, durable gallon container filled with our pure water.</p>
-                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Add to Cart</button>
-                </div>
+<section class="products">
+    <h3>Our Products</h3>
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <h4>{{ product.name }}</h4>
+                <p>{{ product.description }}</p>
+                <p><strong>₱{{ product.price|number_format(2) }}</strong></p>
 
-                <!-- Product 3 -->
-                <div class="bg-gray-50 p-6 rounded-2xl text-center shadow-lg hover:scale-105 transform transition">
-                    <h3 class="text-2xl font-bold mb-2">Empty Container Pickup</h3>
-                    <p class="text-gray-600 mb-4">Schedule a pickup for your empty containers. We'll handle it!</p>
-                    <button class="bg-blue-600 text-white py-2 px-6 rounded-full font-medium hover:bg-blue-700">Schedule Pickup</button>
-                </div>
-
+                {% if product.name == 'Empty Container Pickup' %}
+                    <a href="#" class="btn btn-green">Schedule</a>
+                {% else %}
+                    <a href="{{ path('cart_add', {'id': product.id}) }}" class="btn btn-blue">Add to Cart</a>
+                {% endif %}
             </div>
-        </div>
-    </section>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+/* --- General Layout --- */
+body {
+    font-family: Arial, sans-serif;
+    background: #f8fafc;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Header --- */
+header {
+    background: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+header h1 {
+    font-size: 1.5rem;
+    color: #111;
+}
+nav a {
+    color: #0056d2;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 1rem;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* --- Hero Section --- */
+.hero {
+    background: linear-gradient(90deg, #004aad, #0078ff);
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+    border-radius: 0 0 1.5rem 1.5rem;
+}
+.hero h2 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+}
+.hero p {
+    font-size: 1.1rem;
+}
+
+/* --- Products Section --- */
+.products {
+    padding: 2rem;
+    text-align: center;
+}
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+.product-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1rem;
+    transition: transform 0.2s ease;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.6rem;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+.btn-blue {
+    background: #0056d2;
+}
+.btn-blue:hover {
+    background: #003c9d;
+}
+.btn-green {
+    background: #28a745;
+}
+.btn-green:hover {
+    background: #1e7e34;
+}
+</style>
 {% endblock %}

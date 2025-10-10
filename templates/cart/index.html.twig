@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<header>
+    <h1>Your Cart</h1>
+    <nav>
+        <a href="{{ path('dashboard') }}">Home</a>
+    </nav>
+</header>
+
+<section class="cart">
+    {% if cart is empty %}
+        <p>Your cart is empty.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for id, item in cart %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₱{{ item.price }}</td>
+                    <td>₱{{ item.price * item.quantity }}</td>
+                    <td><a href="{{ path('cart_remove', {'id': id}) }}">Remove</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Total: ₱{{ total }}</h3>
+        <a href="{{ path('order_place') }}" class="btn">Place Order (COD Only)</a>
+        <a href="{{ path('order_cancel') }}" class="btn cancel">Cancel Order</a>
+    {% endif %}
+</section>
+
+<style>
+table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #ddd; }
+.btn.cancel { background: #dc2626; }
+.btn.cancel:hover { background: #b91c1c; }
+</style>
+{% endblock %}

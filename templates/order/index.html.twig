@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h2 class="text-2xl mb-4 font-bold">📦 Orders</h2>
+
+<table class="w-full border">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Payment</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for order in orders %}
+    <tr>
+      <td>{{ order.id }}</td>
+      <td>{{ order.status }}</td>
+      <td>{{ order.paymentMethod }}</td>
+      <td>
+        {% if order.status != 'Cancelled' and order.status != 'Delivered' %}
+        <form method="post" action="{{ path('order_cancel', {id: order.id}) }}" style="display:inline" onsubmit="return confirm('Cancel this order?')">
+            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
+            <button class="bg-red-600 text-white px-3 py-1 rounded">Cancel</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
