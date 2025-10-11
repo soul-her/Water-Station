@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-xl mt-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Checkout</h1>
+
+    <form method="post" class="space-y-6">
+        <div>
+            <label class="block font-medium">Full Name</label>
+            <input type="text" name="name" class="w-full border rounded-lg p-2" required>
+        </div>
+        <div>
+            <label class="block font-medium">Contact Number</label>
+            <input type="text" name="contact" class="w-full border rounded-lg p-2" required>
+        </div>
+        <div>
+            <label class="block font-medium">Street Address</label>
+            <input type="text" name="street" class="w-full border rounded-lg p-2" required>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block font-medium">Barangay</label>
+                <input type="text" name="barangay" class="w-full border rounded-lg p-2" required>
+            </div>
+            <div>
+                <label class="block font-medium">City</label>
+                <input type="text" name="city" class="w-full border rounded-lg p-2" required>
+            </div>
+        </div>
+        <div>
+            <label class="block font-medium">Special Instructions</label>
+            <textarea name="instructions" rows="3" class="w-full border rounded-lg p-2"></textarea>
+        </div>
+
+        <div class="border-t pt-4 mt-6">
+            <p class="text-gray-600">Subtotal: ₱{{ subtotal }}</p>
+            <p class="text-gray-600">Delivery Fee: ₱{{ deliveryFee }}</p>
+            <p class="text-xl font-bold mt-2">Total: ₱{{ total }}</p>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 hover:bg-blue-700">Place Order</button>
+    </form>
+</div>
+{% endblock %}

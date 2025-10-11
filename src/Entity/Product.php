@@ -15,26 +15,31 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 150)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?int $stock = null;
-
-    #[ORM\Column]
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private ?float $price = null;
 
-  
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
-    // --- Relationship added: One Product can be in many OrderProducts (Order Items) ---
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'])]
-    private Collection $orderProducts;
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?Category $category = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Stock::class, cascade: ['remove', 'persist'])]
+    private Collection $stocks;
 
     public function __construct()
     {
-        $this->orderProducts = new ArrayCollection();
+        $this->stocks = new ArrayCollection();
     }
 
+    // Getters & Setters
     public function getId(): ?int
     {
         return $this->id;
@@ -45,20 +50,9 @@ class Product
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
-        return $this;
-    }
-
-    public function getStock(): ?int
-    {
-        return $this->stock;
-    }
-
-    public function setStock(int $stock): static
-    {
-        $this->stock = $stock;
         return $this;
     }
 
@@ -67,60 +61,67 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    public function setPrice(float $price): self
     {
         $this->price = $price;
         return $this;
     }
 
-    /**
-     * @return Collection<int, OrderProduct>
-     */
-    public function getOrderProducts(): Collection
+    public function getImage(): ?string
     {
-        return $this->orderProducts;
+        return $this->image;
     }
 
-    public function addOrderProduct(OrderProduct $orderProduct): static
+    public function setImage(?string $image): self
     {
-        if (!$this->orderProducts->contains($orderProduct)) {
-            $this->orderProducts->add($orderProduct);
-            $orderProduct->setProduct($this);
-        }
-
+        $this->image = $image;
         return $this;
     }
 
-    public function removeOrderProduct(OrderProduct $orderProduct): static
+    public function getCategory(): ?Category
     {
-        if ($this->orderProducts->removeElement($orderProduct)) {
-            // set the owning side to null (unless already changed)
-            if ($orderProduct->getProduct() === $this) {
-                $orderProduct->setProduct(null);
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /** @return Collection<int, Stock> */
+    public function getStocks(): Collection
+    {
+        return $this->stocks;
+    }
+
+    public function addStock(Stock $stock): self
+    {
+        if (!$this->stocks->contains($stock)) {
+            $this->stocks->add($stock);
+            $stock->setProduct($this);
+        }
+        return $this;
+    }
+
+    public function removeStock(Stock $stock): self
+    {
+        if ($this->stocks->removeElement($stock)) {
+            if ($stock->getProduct() === $this) {
+                $stock->setProduct(null);
             }
         }
-
         return $this;
     }
-    
-    // Helper method for form choices
-    public function __toString(): string
-    {
-        return $this->name . ' ($' . number_format($this->price, 2) . ')';
-    }
-
-    #[ORM\Column(type: 'text', nullable: true)]
-private ?string $description = null;
-
-public function getDescription(): ?string
-{
-    return $this->description;
-}
-
-public function setDescription(?string $description): self
-{
-    $this->description = $description;
-    return $this;
-}
-
 }

@@ -10,7 +10,7 @@ services:
       MYSQL_USER: test_demo_user
       MYSQL_PASSWORD: test_demo_password
     ports:
-      - "3306:3306"   # ✅ back to default
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -25,6 +25,22 @@ services:
       PMA_PASSWORD: test_demo_password
     ports:
       - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - test_demo_network
+
+  app:
+    build:
+    context: .
+    dockerfile: Dockerfile
+    container_name: symfony_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html:cached
+    ports:
+      - "8000:8000"
     depends_on:
       - db
     networks:

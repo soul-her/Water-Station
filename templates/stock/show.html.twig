@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block title %}👁 View Stock | Touch Up{% endblock %}
+
+{% block body %}
+<main class="max-w-lg mx-auto py-16 px-6">
+    <div class="bg-white shadow-lg rounded-2xl p-8 border-t-4 border-blue-500">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Stock Details</h1>
+
+        <ul class="space-y-4 text-gray-700">
+            <li><strong>ID:</strong> {{ stock.id }}</li>
+            <li><strong>Product:</strong> {{ stock.product ? stock.product.name : 'N/A' }}</li>
+            <li><strong>Quantity:</strong> <span class="text-blue-600 font-semibold">{{ stock.quantity }}</span></li>
+        </ul>
+
+        <div class="mt-8 flex justify-between">
+            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition">Edit</a>
+            <a href="{{ path('app_stock_index') }}" class="text-blue-600 hover:underline">← Back to list</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

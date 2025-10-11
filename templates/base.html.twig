@@ -1,75 +1,64 @@
-{# templates/base.html.twig #}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Water Station Delivery{% endblock %}</title>
+    <title>{% block title %}Touch Up - Pure Water Delivery{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
+        .primary-dark { color: #003366; }
+        .primary-accent { background-color: #00A8E8; }
+        .primary-accent-text { color: #00A8E8; }
+        .primary-accent-hover:hover { background-color: #0099D0; }
+        .card-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-lift:hover { transform: translateY(-8px); box-shadow: 0 15px 25px -5px rgba(0,50,100,0.15); }
+        #cart-sidebar { width: 100%; max-width: 400px; right: -400px; transition: right 0.3s ease-in-out; }
+        #cart-sidebar.open { right: 0; }
+        .backdrop { transition: opacity 0.3s ease; }
     </style>
+    {% block styles %}{% endblock %}
 </head>
-<body class="bg-white text-gray-800">
-
-
+<body>
     <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="#" class="font-bold text-xl text-blue-600">About Us</a>
-            
-            <!-- Desktop Menu -->
-            <nav class="hidden md:flex space-x-6">
-                <a href="#products" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Products</a>
-                <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">Contact</a>
-                <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">FAQ</a>
+    <header class="bg-white sticky top-0 z-30 border-b border-gray-100 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold primary-accent-text">TOUCH UP</h1>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#hero" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Home</a>
+                <a href="#products" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Pricing</a>
+                <a href="#" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Support</a>
             </nav>
-
-            <!-- Cart + Mobile Menu -->
-            <div class="flex items-center space-x-4">
-                <a href="#" class="text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                    🛒
-                </a>
-                <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                    ☰
-                </button>
-            </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-gray-50 border-t border-gray-200 py-2">
-            <nav class="flex flex-col items-center space-y-2">
-                <a href="#products" class="block w-full text-center py-2 text-gray-600 hover:bg-gray-100 transition-colors duration-200">Products</a>
-                <a href="#" class="block w-full text-center py-2 text-gray-600 hover:bg-gray-100 transition-colors duration-200">Contact</a>
-                <a href="#" class="block w-full text-center py-2 text-gray-600 hover:bg-gray-100 transition-colors duration-200">FAQ</a>
-            </nav>
+            <button id="cart-button" class="relative primary-accent-text p-3 rounded-full hover:bg-blue-50 transition duration-150" title="Shopping Cart" onclick="openCartSidebar()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span id="cart-count"
+                      class="absolute top-0 right-0 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                    0
+                </span>
+            </button>
         </div>
     </header>
 
-    <!-- Page Content -->
+    <!-- Main Content -->
     <main>
         {% block body %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-8 px-4 text-center">
-        <div class="container mx-auto">
-            <p>&copy; {{ "now"|date("Y") }} Water Station Delivery. All Rights Reserved.</p>
+    <footer class="bg-gray-900 text-white py-10 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm border-t border-gray-800 pt-6">
+            <p>&copy; {{ "now"|date("Y") }} Touch Up Water Delivery. Effortless Hydration Solutions.</p>
         </div>
     </footer>
 
-    <script>
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if(mobileMenuBtn){
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-    </script>
+    <!-- Cart Sidebar -->
+    {% include 'partials/cart_sidebar.html.twig' %}
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/cart.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

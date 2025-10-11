@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}✏️ Edit Stock | Touch Up{% endblock %}
+
+{% block body %}
+<main class="max-w-lg mx-auto py-16 px-6">
+    <div class="bg-white shadow-lg rounded-2xl p-8 border-t-4 border-green-500">
+        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Edit Stock</h1>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            <div>
+                {{ form_label(form.product, 'Product', {'label_attr': {'class': 'block text-gray-700 font-medium mb-2'}}) }}
+                {{ form_widget(form.product, {'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-400 focus:outline-none'}}) }}
+            </div>
+            <div>
+                {{ form_label(form.quantity, 'Quantity', {'label_attr': {'class': 'block text-gray-700 font-medium mb-2'}}) }}
+                {{ form_widget(form.quantity, {'attr': {'class': 'w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-400 focus:outline-none'}}) }}
+            </div>
+            <div class="text-center">
+                <button class="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-green-700 transition">
+                    Update Stock
+                </button>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="text-center mt-6">
+            <a href="{{ path('app_stock_index') }}" class="text-blue-600 hover:underline">← Back to Stock List</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

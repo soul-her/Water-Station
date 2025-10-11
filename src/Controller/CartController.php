@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
+use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,63 +12,64 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/cart')]
 class CartController extends AbstractController
 {
-    #[Route('/', name: 'cart_index')]
-    public function index(SessionInterface $session): Response
+    #[Route('/add', name: 'cart_add', methods: ['POST'])]
+    public function add(Request $request, ProductRepository $productRepository, SessionInterface $session): Response
     {
-        $cart = $session->get('cart', []);
-        $total = 0;
+        $id = $request->request->get('id');
+        $product = $productRepository->find($id);
 
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
+        if (!$product) {
+            return $this->json(['error' => 'Product not found'], 404);
         }
 
-        return $this->render('cart/index.html.twig', [
-            'cart' => $cart,
-            'total' => $total,
-        ]);
-    }
-
-    #[Route('/add/{id}', name: 'cart_add')]
-    public function add(Product $product, SessionInterface $session): Response
-    {
         $cart = $session->get('cart', []);
+        $productId = $product->getId();
 
-        $id = $product->getId();
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity']++;
+        if (isset($cart[$productId])) {
+            $cart[$productId]['quantity'] += 1;
         } else {
-            $cart[$id] = [
+            $cart[$productId] = [
+                'id' => $product->getId(),
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
-                'quantity' => 1
+                'image' => $product->getImage(),
+                'quantity' => 1,
             ];
         }
 
         $session->set('cart', $cart);
 
-        $this->addFlash('success', "{$product->getName()} added to cart!");
-
-        return $this->redirectToRoute('home');
+        return $this->json([
+            'message' => $product->getName() . ' added to cart!',
+            'cart' => $cart
+        ]);
     }
 
-    #[Route('/remove/{id}', name: 'cart_remove')]
-    public function remove(Product $product, SessionInterface $session): Response
+    #[Route('/view', name: 'cart_view', methods: ['GET'])]
+    public function view(SessionInterface $session): Response
     {
         $cart = $session->get('cart', []);
-        unset($cart[$product->getId()]);
-        $session->set('cart', $cart);
-
-        $this->addFlash('info', "{$product->getName()} removed from cart.");
-
-        return $this->redirectToRoute('cart_index');
+        return $this->json(['cart' => $cart]);
     }
 
-    #[Route('/clear', name: 'cart_clear')]
+    #[Route('/remove', name: 'cart_remove', methods: ['POST'])]
+    public function remove(Request $request, SessionInterface $session): Response
+    {
+        $id = $request->request->get('id');
+        $cart = $session->get('cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            $session->set('cart', $cart);
+        }
+
+        return $this->json(['cart' => $cart]);
+    }
+
+    #[Route('/clear', name: 'cart_clear', methods: ['POST'])]
     public function clear(SessionInterface $session): Response
     {
         $session->remove('cart');
-        $this->addFlash('warning', 'Cart cleared.');
-
-        return $this->redirectToRoute('cart_index');
+        return $this->json(['message' => 'Cart cleared']);
     }
 }
