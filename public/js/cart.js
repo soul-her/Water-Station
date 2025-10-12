@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const cartButton = document.getElementById('cart-button');
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartBackdrop = document.getElementById('cart-backdrop');
+    const checkoutBtn = document.getElementById('checkout-btn');
 
+    // === Sidebar Controls ===
     window.openCartSidebar = function () {
         cartSidebar.classList.add('open');
         cartBackdrop.classList.remove('hidden');
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cartBackdrop.classList.add('hidden');
     };
 
-    // Add to Cart buttons
+    // === Add to Cart ===
     document.querySelectorAll('.add-to-cart-btn').forEach(button => {
         button.addEventListener('click', async function () {
             const id = this.getAttribute('data-id');
@@ -28,11 +29,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (data.cart) {
                 updateCartCount(data.cart);
+                openCartSidebar(); // Auto-open sidebar
             }
         });
     });
+
+    // === Checkout Redirect ===
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            window.location.href = '/cart/checkout';
+        });
+    }
 });
 
+// === Load Cart ===
 async function loadCart() {
     const response = await fetch('/cart/view');
     const data = await response.json();
@@ -50,14 +60,14 @@ async function loadCart() {
         div.classList.add('flex', 'items-center', 'justify-between', 'border-b', 'pb-2');
 
         div.innerHTML = `
-            <div class="flex items-center space-x-4">
-                <img src="/uploads/products/${item.image}" alt="${item.name}" class="w-12 h-12 rounded">
+            <div class="flex items-center space-x-3">
+                <img src="/uploads/products/${item.image}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover">
                 <div>
                     <p class="font-semibold">${item.name}</p>
-                    <p class="text-gray-500">₱${item.price} × ${item.quantity}</p>
+                    <p class="text-gray-500 text-sm">₱${item.price} × ${item.quantity}</p>
                 </div>
             </div>
-            <button onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700 font-bold">×</button>
+            <button onclick="removeItem(${item.id})" class="text-red-500 hover:text-red-700 font-bold text-xl">&times;</button>
         `;
         cartItemsDiv.appendChild(div);
     }
@@ -66,11 +76,14 @@ async function loadCart() {
     updateCartCount(data.cart);
 }
 
+// === Update Cart Count ===
 function updateCartCount(cart) {
     const count = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').textContent = count;
+    const cartCountEl = document.getElementById('cart-count');
+    if (cartCountEl) cartCountEl.textContent = count;
 }
 
+// === Remove & Clear Cart ===
 async function removeItem(id) {
     await fetch('/cart/remove', {
         method: 'POST',

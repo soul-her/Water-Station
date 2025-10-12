@@ -4,21 +4,25 @@
 
 {% block body %}
 <!-- Hero Section -->
-<section id="hero" class="relative bg-[#003366] text-white py-20 md:py-32">
-    <div class="absolute inset-0 opacity-80" style="background: linear-gradient(135deg, #003366 0%, #00A8E8 100%);"></div>
+
+<section id="hero"
+    class="relative bg-cover bg-center text-white py-20 md:py-32" 
+    style="background-image: url('/images/water-bg.jpg');">
+    
+    <!-- Overlay Gradient -->
+    <div class="absolute inset-0 bg-gradient-to-r from-[#003366]/90 to-[#00A8E8]/70"></div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <p class="text-xl font-semibold mb-3 text-white">REVOLUTIONIZING WATER DELIVERY</p>
         <h2 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight drop-shadow-lg">
             <span class="text-yellow-300">Pure.</span> Delivered. Effortless.
         </h2>
-        <p class="text-lg md:text-xl text-blue-200 mb-10 max-w-3xl mx-auto">
-            Get premium filtered drinking water delivered on-demand to your home or office.
-        </p>
         <a href="#products" class="px-10 py-4 bg-white text-[#00A8E8] font-bold rounded-full text-lg transition duration-300 shadow-xl hover:bg-gray-100 hover:scale-[1.02]">
             See Pricing & Order Now
         </a>
     </div>
 </section>
+
 
 <!-- Products Section -->
 <section id="products" class="py-16 md:py-24">

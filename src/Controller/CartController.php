@@ -72,4 +72,65 @@ class CartController extends AbstractController
         $session->remove('cart');
         return $this->json(['message' => 'Cart cleared']);
     }
+
+    // ✅ View Cart Page (if user visits /cart)
+    #[Route('', name: 'cart_index', methods: ['GET'])]
+    public function index(SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+
+        $total = array_reduce($cart, function ($sum, $item) {
+            return $sum + ($item['price'] * $item['quantity']);
+        }, 0);
+
+        return $this->render('cart/index.html.twig', [
+            'cart' => $cart,
+            'total' => $total,
+        ]);
+    }
+
+    // ✅ Checkout Page (only used if accessed directly)
+    #[Route('/checkout', name: 'cart_checkout', methods: ['GET'])]
+    public function checkout(SessionInterface $session): Response
+    {
+        $cart = $session->get('cart', []);
+
+        if (empty($cart)) {
+            $this->addFlash('warning', 'Your cart is empty.');
+            return $this->redirectToRoute('cart_index');
+        }
+
+        $total = array_reduce($cart, function ($sum, $item) {
+            return $sum + ($item['price'] * $item['quantity']);
+        }, 0);
+
+        return $this->render('cart/checkout.html.twig', [
+            'cart' => $cart,
+            'total' => $total,
+        ]);
+    }
+
+    // ✅ Checkout Processing (AJAX version)
+    #[Route('/checkout/process', name: 'cart_checkout_process', methods: ['POST'])]
+    public function processCheckout(Request $request, SessionInterface $session): Response
+    {
+        $name = $request->request->get('name');
+        $address = $request->request->get('address');
+        $phone = $request->request->get('phone');
+
+        // 🧾 Here, you can later save the order details to DB
+        $cart = $session->get('cart', []);
+        $session->remove('cart');
+
+        return $this->json([
+            'success' => true,
+            'message' => "Order placed successfully for {$name}!",
+            'customer' => [
+                'name' => $name,
+                'address' => $address,
+                'phone' => $phone,
+            ],
+            'cart' => $cart
+        ]);
+    }
 }

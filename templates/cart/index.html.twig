@@ -1,43 +1,51 @@
 {% extends 'base.html.twig' %}
-{% block body %}
-<header>
-    <h1>Your Cart</h1>
-    <nav>
-        <a href="{{ path('dashboard') }}">Home</a>
-    </nav>
-</header>
 
-<section class="cart">
+{% block title %}My Cart - Touch Up{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto py-16 px-6">
+    <h1 class="text-4xl font-bold text-center mb-10">🛒 Your Cart</h1>
+
     {% if cart is empty %}
-        <p>Your cart is empty.</p>
+        <p class="text-center text-gray-500">Your cart is empty.</p>
+        <div class="text-center mt-6">
+            <a href="{{ path('dashboard') }}" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700">Continue Shopping</a>
+        </div>
     {% else %}
-        <table>
+        <table class="w-full border-collapse mb-10">
             <thead>
-                <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr>
+                <tr class="bg-gray-100">
+                    <th class="py-3 px-4 text-left">Product</th>
+                    <th class="py-3 px-4 text-center">Qty</th>
+                    <th class="py-3 px-4 text-right">Price</th>
+                    <th class="py-3 px-4 text-right">Total</th>
+                </tr>
             </thead>
             <tbody>
-                {% for id, item in cart %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>₱{{ item.price }}</td>
-                    <td>₱{{ item.price * item.quantity }}</td>
-                    <td><a href="{{ path('cart_remove', {'id': id}) }}">Remove</a></td>
-                </tr>
+                {% for item in cart %}
+                    <tr class="border-b">
+                        <td class="py-3 px-4 flex items-center gap-4">
+                            <img src="{{ asset('uploads/products/' ~ item.image) }}" class="w-12 h-12 rounded" alt="">
+                            <span>{{ item.name }}</span>
+                        </td>
+                        <td class="py-3 px-4 text-center">{{ item.quantity }}</td>
+                        <td class="py-3 px-4 text-right">₱{{ item.price }}</td>
+                        <td class="py-3 px-4 text-right font-semibold">₱{{ item.price * item.quantity }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <h3>Total: ₱{{ total }}</h3>
-        <a href="{{ path('order_place') }}" class="btn">Place Order (COD Only)</a>
-        <a href="{{ path('order_cancel') }}" class="btn cancel">Cancel Order</a>
-    {% endif %}
-</section>
+        <div class="flex justify-between items-center border-t pt-4">
+            <h3 class="text-xl font-bold">Total:</h3>
+            <p class="text-2xl font-bold text-blue-600">₱{{ total }}</p>
+        </div>
 
-<style>
-table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
-th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #ddd; }
-.btn.cancel { background: #dc2626; }
-.btn.cancel:hover { background: #b91c1c; }
-</style>
+        <div class="mt-10 flex justify-end">
+            <a href="{{ path('cart_checkout') }}" class="bg-green-600 text-white py-3 px-8 rounded-lg text-lg font-semibold hover:bg-green-700">
+                Proceed to Checkout
+            </a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
