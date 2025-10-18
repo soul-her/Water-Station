@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Touch Up - Pure Water Delivery{% endblock %}</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
@@ -13,49 +14,50 @@
         .primary-accent-hover:hover { background-color: #0099D0; }
         .card-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .card-lift:hover { transform: translateY(-8px); box-shadow: 0 15px 25px -5px rgba(0,50,100,0.15); }
-        #cart-sidebar { width: 100%; max-width: 400px; right: -400px; transition: right 0.3s ease-in-out; }
-        #cart-sidebar.open { right: 0; }
-        .backdrop { transition: opacity 0.3s ease; }
     </style>
+
     {% block styles %}{% endblock %}
 </head>
 <body>
     <!-- Header -->
     <header class="bg-white sticky top-0 z-30 border-b border-gray-100 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-3xl font-extrabold primary-accent-text">TOUCH UP</h1>
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- LOGO AND TITLE WRAPPER -->
+            <div class="flex items-center space-x-3">
+                <h1 class="text-3xl font-extrabold text-blue-600">TOUCH UP</h1>
+                <!-- Correct path to public/images/logo-placeholder.png -->
+                <img src="{{ asset('images/logo-placeholder.png') }}" alt="Touch Up Logo" class="h-10 w-auto object-contain">
+            </div>
+
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="#hero" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Home</a>
-                <a href="#products" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Pricing</a>
-                <a href="#" class="text-gray-600 font-medium hover:primary-accent-text transition duration-150">Support</a>
+                <a href="{{ path('dashboard_index') }}" class="text-gray-600 font-medium hover:text-blue-600 transition">Home</a>
+                <a href="#products" class="text-gray-600 font-medium hover:text-blue-600 transition">Pricing</a>
+                <a href="#How" class="text-gray-600 font-medium hover:text-blue-600 transition">How it Works</a>
             </nav>
-            <button id="cart-button" class="relative primary-accent-text p-3 rounded-full hover:bg-blue-50 transition duration-150" title="Shopping Cart" onclick="openCartSidebar()">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <!-- 🛒 Cart Button -->
+            <a href="{{ path('cart_index') }}" class="relative flex items-center space-x-1">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 <span id="cart-count"
-                      class="absolute top-0 right-0 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                    0
+                      class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1.5">
+                    {{ app.session.get('cart') is defined ? app.session.get('cart')|length : 0 }}
                 </span>
-            </button>
+            </a>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="min-h-screen">
         {% block body %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-10 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm border-t border-gray-800 pt-6">
-            <p>&copy; {{ "now"|date("Y") }} Touch Up Water Delivery. Effortless Hydration Solutions.</p>
-        </div>
+    <footer class="bg-gray-900 text-white text-center py-6 mt-10">
+        <p>&copy; {{ "now"|date("Y") }} Touch Up Water Delivery.</p>
     </footer>
-
-    <!-- Cart Sidebar -->
-    {% include 'partials/cart_sidebar.html.twig' %}
 
     <!-- Scripts -->
     <script src="{{ asset('js/cart.js') }}"></script>

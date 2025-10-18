@@ -2,6 +2,42 @@
 
 {% block title %}📦 Stock Management | Touch Up{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- DataTables CSS for Tailwind -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.tailwindcss.css">
+    <style>
+        /*
+         * Custom Tailwind styles for DataTables controls
+         * DataTables uses older classes that need to be styled to match Tailwind
+         */
+        .dataTables_wrapper .dataTables_filter label,
+        .dataTables_wrapper .dataTables_length label,
+        .dataTables_wrapper .dataTables_info {
+            @apply text-sm text-gray-700;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            @apply p-2 rounded-lg transition duration-150 ease-in-out;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            @apply bg-blue-500 text-white shadow-md; /* Using blue accent color */
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            @apply text-gray-400 cursor-not-allowed;
+        }
+        /* Fix for input fields */
+        .dataTables_wrapper input[type="search"],
+        .dataTables_wrapper select {
+            @apply shadow-sm focus:ring-blue-500 focus:border-blue-500 block sm:text-sm border-gray-300 rounded-md;
+        }
+
+        /* Custom colors referenced in your HTML (assuming these map to Tailwind utility classes) */
+        .primary-dark { color: #1f2937; } /* Example: gray-800 */
+        .primary-accent { background-color: #3b82f6; } /* Example: blue-500 */
+        .primary-accent-hover:hover { background-color: #2563eb; } /* Example: blue-600 */
+    </style>
+{% endblock %}
+
 {% block body %}
 <main class="max-w-6xl mx-auto py-16 px-6">
     <div class="flex justify-between items-center mb-10">
@@ -11,25 +47,34 @@
         </a>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border-t-4 border-blue-500">
-        <table class="min-w-full text-sm text-gray-700">
+    <!-- Padding added here to ensure DataTables controls look good -->
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border-t-4 border-blue-500 p-4">
+        <!-- CRITICAL: Added id="stockTable" for DataTables initialization -->
+        <table id="stockTable" class="min-w-full text-sm text-gray-700">
             <thead class="bg-blue-50 text-gray-800 uppercase text-xs font-semibold">
                 <tr>
-                    <th class="py-4 px-6">ID</th>
-                    <th class="py-4 px-6">Product</th>
-                    <th class="py-4 px-6">Quantity</th>
+                    <!-- ALIGNMENT CHANGE: Center ID -->
+                    <th class="py-4 px-6 text-center">ID</th>
+                    <!-- ALIGNMENT CHANGE: Explicitly Left Align Product -->
+                    <th class="py-4 px-6 text-left">Product</th>
+                    <!-- ALIGNMENT CHANGE: Right Align Quantity (numbers) -->
+                    <th class="py-4 px-6 text-right">Quantity</th>
+                    <!-- Actions remains Right Aligned -->
                     <th class="py-4 px-6 text-right">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for stock in stocks %}
                     <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="py-4 px-6">{{ stock.id }}</td>
-                        <td class="py-4 px-6 font-medium text-gray-900">
+                        <!-- ALIGNMENT CHANGE: Center ID -->
+                        <td class="py-4 px-6 text-center">{{ stock.id }}</td>
+                        <!-- ALIGNMENT CHANGE: Explicitly Left Align Product -->
+                        <td class="py-4 px-6 font-medium text-gray-900 text-left">
                             {{ stock.product ? stock.product.name : '—' }}
                         </td>
-                        <td class="py-4 px-6 font-bold text-blue-600">{{ stock.quantity }}</td>
-                        <td class="py-4 px-6 text-right">
+                        <!-- ALIGNMENT CHANGE: Right Align Quantity (numbers) -->
+                        <td class="py-4 px-6 font-bold text-blue-600 text-right">{{ stock.quantity }}</td>
+                        <td class="py-4 px-6 text-right whitespace-nowrap">
                             <a href="{{ path('app_stock_show', {'id': stock.id}) }}" class="text-blue-500 hover:underline">View</a> |
                             <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="text-green-600 hover:underline">Edit</a>
                             <form method="post" action="{{ path('app_stock_delete', {'id': stock.id}) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this stock?');">
@@ -39,6 +84,7 @@
                         </td>
                     </tr>
                 {% else %}
+                    <!-- This row will be hidden once DataTables is initialized -->
                     <tr>
                         <td colspan="4" class="text-center py-8 text-gray-400 italic">No stock records available yet.</td>
                     </tr>
@@ -47,4 +93,35 @@
         </table>
     </div>
 </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawR/Y2/232m/N/A6kzX24B51jW53/3yA6Wq0=" crossorigin="anonymous"></script>
+    <!-- DataTables Core JS -->
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <!-- DataTables Tailwind Integration JS (Must be after core) -->
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.tailwindcss.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTables on the target table ID
+            $('#stockTable').DataTable({
+                responsive: true,
+                order: [[1, 'asc']], // Sort by 'Product' column by default (column index 1)
+                columnDefs: [
+                    // Disable sorting/searching on the 'Actions' column (index 3)
+                    { targets: 3, orderable: false, searchable: false }
+                ],
+                // Customize pagination text for a cleaner look
+                language: {
+                    paginate: {
+                        previous: 'Prev',
+                        next: 'Next'
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}

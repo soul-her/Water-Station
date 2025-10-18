@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: "orders")]
 class Order
 {
     #[ORM\Id]
@@ -16,37 +17,104 @@ class Order
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $status = 'Pending';
+    private ?string $status = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $address = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $paymentMethod = 'COD'; // Strict COD policy
+    private ?string $contact = null;
 
-    #[ORM\OneToMany(mappedBy: 'orderRef', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $created_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'])]
     private Collection $orderProducts;
 
     public function __construct()
     {
+        $this->created_at = new \DateTimeImmutable();
         $this->orderProducts = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
+    // ✅ Getters and Setters
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
-    public function getStatus(): ?string { return $this->status; }
-    public function setStatus(string $status): self { $this->status = $status; return $this; }
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
 
-    public function getPaymentMethod(): ?string { return $this->paymentMethod; }
-    public function setPaymentMethod(string $paymentMethod): self { $this->paymentMethod = $paymentMethod; return $this; }
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+        return $this;
+    }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): self
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    public function getContact(): ?string
+    {
+        return $this->contact;
+    }
+
+    public function setContact(string $contact): self
+    {
+        $this->contact = $contact;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    {
+        $this->created_at = $created_at;
+        return $this;
+    }
+
+    // ✅ OrderProducts relationship
     /**
      * @return Collection<int, OrderProduct>
      */
-    public function getOrderProducts(): Collection { return $this->orderProducts; }
+    public function getOrderProducts(): Collection
+    {
+        return $this->orderProducts;
+    }
 
     public function addOrderProduct(OrderProduct $orderProduct): self
     {
         if (!$this->orderProducts->contains($orderProduct)) {
             $this->orderProducts->add($orderProduct);
-            $orderProduct->setOrderRef($this);
+            $orderProduct->setOrder($this);
         }
         return $this;
     }
@@ -54,17 +122,10 @@ class Order
     public function removeOrderProduct(OrderProduct $orderProduct): self
     {
         if ($this->orderProducts->removeElement($orderProduct)) {
-            if ($orderProduct->getOrderRef() === $this) {
-                $orderProduct->setOrderRef(null);
+            if ($orderProduct->getOrder() === $this) {
+                $orderProduct->setOrder(null);
             }
         }
         return $this;
-    }
-
-    public function cancel(): void
-    {
-        if ($this->status !== 'Delivered') {
-            $this->status = 'Cancelled';
-        }
     }
 }

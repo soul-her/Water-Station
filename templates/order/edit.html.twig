@@ -1,40 +1,15 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Edit Order #{{ order.id }}{% endblock %}
+
 {% block body %}
-<div class="max-w-md mx-auto p-8 bg-white rounded-xl shadow-lg">
-    <h1 class="text-2xl font-bold mb-6 text-center">📝 Add New Order</h1>
+<h1 class="text-3xl font-extrabold text-gray-800 text-center mb-8">Edit Order #{{ order.id }}</h1>
 
-    {{ form_start(form) }}
-        <div class="mb-4">
-            {{ form_label(form.customerName, 'Customer Name', {'label_attr': {'class': 'block mb-2 font-medium'}}) }}
-            {{ form_widget(form.customerName, {'attr': {'class': 'w-full p-2 border rounded focus:ring focus:ring-blue-300'}}) }}
-            {{ form_errors(form.customerName) }}
-        </div>
+{% include 'order/_form.html.twig' with {'button_label': 'Update Order'} %}
 
-        <div class="mb-4">
-            {{ form_label(form.address, 'Address', {'label_attr': {'class': 'block mb-2 font-medium'}}) }}
-            {{ form_widget(form.address, {'attr': {'class': 'w-full p-2 border rounded focus:ring focus:ring-blue-300'}}) }}
-            {{ form_errors(form.address) }}
-        </div>
-
-        <div class="mb-4">
-            {{ form_label(form.deliveryDate, 'Delivery Date', {'label_attr': {'class': 'block mb-2 font-medium'}}) }}
-            {{ form_widget(form.deliveryDate, {'attr': {'class': 'w-full p-2 border rounded focus:ring focus:ring-blue-300'}}) }}
-            {{ form_errors(form.deliveryDate) }}
-        </div>
-
-        <div class="mb-6">
-            {{ form_label(form.status, 'Status', {'label_attr': {'class': 'block mb-2 font-medium'}}) }}
-            {{ form_widget(form.status, {'attr': {'class': 'w-full p-2 border rounded focus:ring focus:ring-blue-300'}}) }}
-            {{ form_errors(form.status) }}
-        </div>
-
-        <div class="flex justify-between">
-            <a href="{{ path('order_index') }}" 
-               class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">⬅ Back</a>
-            <button type="submit" 
-                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">💾 Save</button>
-        </div>
-    {{ form_end(form) }}
+<div class="mt-4 text-center">
+    {% include 'order/_delete_form.html.twig' %}
 </div>
+
+
 {% endblock %}

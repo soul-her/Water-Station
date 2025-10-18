@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %} | Your App</title>
+    <!-- Load Tailwind CSS via CDN for quick styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensures the Inter font is used */
+        body { font-family: 'Inter', sans-serif; }
+        /* Ensures the sidebar is full height and doesn't scroll with content */
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <div class="flex min-h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-gray-900 text-white flex flex-col p-4 shadow-2xl sidebar">
+            <div class="text-3xl font-extrabold text-indigo-400 mb-8 mt-4 tracking-wider">
+                ADMIN PANEL
+            </div>
+            
+            <nav class="flex-grow space-y-2">
+                {% set currentRoute = app.request.attributes.get('_route') %}
+
+                {# Helper Macro for Sidebar Items #}
+                {% macro nav_item(route, icon_path, label, isActive) %}
+                    <a href="{{ path(route) }}" class="flex items-center p-3 rounded-xl transition duration-200 
+                        {% if isActive %}bg-indigo-700 text-white shadow-md{% else %}hover:bg-gray-700 text-gray-300{% endif %}">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon_path }}"></path></svg>
+                        <span class="font-medium">{{ label }}</span>
+                    </a>
+                {% endmacro %}
+
+                <div class="space-y-1">
+                    {{ nav_item('app_admin_dashboard', 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', 'Dashboard', currentRoute == 'app_admin_dashboard') }}
+                </div>
+
+                <div class="border-t border-gray-700 my-4 pt-4 space-y-1">
+                    <p class="uppercase text-xs font-semibold text-gray-400 px-3 pb-1">Data Management</p>
+                    
+                    {{ nav_item('app_product_index', 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z', 'Products', currentRoute starts with 'app_product') }}
+                    
+                    {{ nav_item('order_index', 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', 'Orders', currentRoute starts with 'order_') }}
+                    
+                    {{ nav_item('app_category_index', 'M7 7h.01M7 3h5a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2zm0 0v18', 'Categories', currentRoute starts with 'app_category') }}
+                    
+                    {{ nav_item('app_stock_index', 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', 'Stock', currentRoute starts with 'app_stock') }}
+                </div>
+            </nav>
+            
+            <div class="border-t border-gray-700 pt-4 mt-auto">
+                 <p class="text-sm text-gray-500">© 2024 Admin System</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+            <header class="mb-8 border-b pb-4">
+                <h1 class="text-4xl font-extrabold text-gray-900">{% block header_title %}Dashboard{% endblock %}</h1>
+            </header>
+            
+            {# Flash Messages #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="p-4 mb-4 text-sm rounded-xl border-l-4 
+                        {% if label == 'success' %}bg-green-100 text-green-800 border-green-500
+                        {% elseif label == 'error' %}bg-red-100 text-red-800 border-red-500
+                        {% else %}bg-blue-100 text-blue-800 border-blue-500
+                        {% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </main>
+    </div>
+
+</body>
+</html>
