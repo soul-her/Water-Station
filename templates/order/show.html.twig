@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/admin.html.twig' %}
 
 {% block title %}Order #{{ order.id }} Details{% endblock %}
 
@@ -49,9 +49,7 @@
 
 <!-- Actions -->
 <div class="mt-8 flex space-x-4">
-    <a href="{{ path('order_index') }}" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50">
-        Back to list
-    </a>
+
     <a href="{{ path('order_edit', {'id': order.id}) }}" class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700">
         Edit
     </a>

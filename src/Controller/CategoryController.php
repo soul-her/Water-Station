@@ -12,15 +12,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/category')]
+// App\Controller\CategoryController.php
+
+// ... (imports)
+
 final class CategoryController extends AbstractController
 {
     #[Route(name: 'app_category_index', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        return $this->render('category/index.html.twig', [
+        // CHANGED: Renders the fragment template for embedding
+        return $this->render('category/index_fragment.html.twig', [
             'categories' => $categoryRepository->findAll(),
         ]);
     }
+    // ... other actions
+
 
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response

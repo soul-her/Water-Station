@@ -14,10 +14,15 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/stock')]
 final class StockController extends AbstractController
 {
+    /**
+     * Renders the stock index list. 
+     * This now uses a fragment template designed to be embedded in another page (the Admin Dashboard).
+     */
     #[Route(name: 'app_stock_index', methods: ['GET'])]
     public function index(StockRepository $stockRepository): Response
     {
-        return $this->render('stock/index.html.twig', [
+        // CHANGED: Render 'stock/index_fragment.html.twig' instead of the full 'stock/index.html.twig'
+        return $this->render('stock/index_fragment.html.twig', [
             'stocks' => $stockRepository->findAll(),
         ]);
     }
@@ -32,7 +37,7 @@ final class StockController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($stock);
             $entityManager->flush();
-
+            $this->addFlash('success', 'Stock item created successfully.'); // Added flash message
             return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -58,7 +63,7 @@ final class StockController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
+            $this->addFlash('success', 'Stock item updated successfully.'); // Added flash message
             return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -74,6 +79,9 @@ final class StockController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$stock->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($stock);
             $entityManager->flush();
+            $this->addFlash('success', 'Stock item deleted successfully.'); // Added flash message
+        } else {
+             $this->addFlash('error', 'Invalid CSRF token. Stock item not deleted.');
         }
 
         return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);

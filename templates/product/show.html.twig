@@ -15,7 +15,7 @@
     <div class="flex gap-2">
         <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Edit</a>
         {% include 'product/_delete_form.html.twig' with {'product': product} %}
-        <a href="{{ path('app_product_index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Back to List</a>
+      
     </div>
 </div>
 {% endblock %}
