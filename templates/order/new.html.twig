@@ -1,12 +1,30 @@
-{% extends 'admin/admin.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Order</title>
 
-{% block title %}Create New Order{% endblock %}
+    {# Tailwind CSS or your stylesheet link #}
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
 
-{% block body %}
-<h1 class="text-3xl font-extrabold text-gray-800 text-center mb-8">Place a New Order</h1>
+    <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-2xl">
+        <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-8">
+            🧾 Create a New Order
+        </h1>
 
-{# Includes the shared form structure for all order fields (name, contact, address, etc.) #}
-{% include 'order/_form.html.twig' %}
+        {# ✅ Include the reusable order form #}
+        {% include 'order/_form.html.twig' with {'form': form, 'button_label': 'Create Order'} %}
 
+        <div class="mt-6 text-center">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'orders'}) }}"
+               class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-medium">
+               ← Back to Orders
+            </a>
+        </div>
+    </div>
 
-{% endblock %}
+</body>
+</html>

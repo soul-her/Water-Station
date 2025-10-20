@@ -1,8 +1,5 @@
 {{ form_start(form) }}
 <div class="space-y-6 p-4">
-
-    {# Using form_row() for simplicity and robustness #}
-    
     <div class="border-t border-gray-200 pt-4">
         {{ form_row(form.name, {
             'label_attr': {'class': 'block text-sm font-medium text-gray-700'},
@@ -16,14 +13,14 @@
             'attr': {'class': 'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'}
         }) }}
     </div>
-    
+
     <div class="border-t border-gray-200 pt-4">
         {{ form_row(form.address, {
             'label_attr': {'class': 'block text-sm font-medium text-gray-700'},
             'attr': {'class': 'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'}
         }) }}
     </div>
-    
+
     <div class="border-t border-gray-200 pt-4">
         {{ form_row(form.status, {
             'label_attr': {'class': 'block text-sm font-medium text-gray-700'},
@@ -31,7 +28,6 @@
         }) }}
     </div>
 
-    {# Include the CSRF token and any hidden fields at the end #}
     {{ form_rest(form) }}
 </div>
 
@@ -40,6 +36,4 @@
         {{ button_label|default('Save') }}
     </button>
 </div>
-
-
 {{ form_end(form) }}

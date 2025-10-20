@@ -1,8 +1,3 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Admin Dashboard{% endblock %}
-
-{% block body %}
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-gray-100">
 <head>
@@ -11,101 +6,122 @@
     <title>Admin Dashboard | Touch Up</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+  
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.tailwindcss.css">
-
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
     <style>
-        /* Tab Styles */
-        .nav-tabs .nav-link {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+        /* Sidebar Links */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-            color: #6b7280;
-            border-bottom: 2px solid transparent;
+            color: #374151;
             transition: all 0.2s ease;
         }
-        .nav-tabs .nav-link:hover {
-            color: #374151;
-            border-color: #d1d5db;
+        .sidebar-link:hover {
+            background-color: #e5e7eb;
+            color: #1d4ed8;
         }
-        .nav-tabs .nav-link.active {
-            color: #2563eb;
-            border-color: #2563eb;
+        .sidebar-link.active {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        /* Fixed Sidebar */
+        .sidebar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        /* Sidebar Scrollbar */
+        .sidebar-fixed::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar-fixed::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
     </style>
 </head>
 
-<body class="min-h-screen bg-gray-100">
-    <!-- ✅ Flash Messages -->
-    <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
-        {% for message in app.flashes('success') %}
-            <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow-sm" role="alert">
-                <p class="font-semibold">✅ Success:</p>
-                <p>{{ message }}</p>
-            </div>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md shadow-sm" role="alert">
-                <p class="font-semibold">❌ Error:</p>
-                <p>{{ message }}</p>
-            </div>
-        {% endfor %}
-    </div>
-
-   <!-- ✅ Header -->
-<header class="max-w-7xl mx-auto flex justify-between items-center py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
-    <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-    {# Removed logout link since route doesn't exist yet #}
-    {# <a href="{{ path('app_logout') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">Logout</a> #}
-</header>
-
-
-    <!-- ✅ Tab Navigation -->
+<body class="bg-gray-100 flex">
     {% set active_tab = app.request.query.get('tab', 'orders') %}
-    <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
-        <nav class="-mb-px flex flex-wrap gap-4 nav-tabs" aria-label="Tabs">
-            <a href="{{ path('app_admin_dashboard', {'tab': 'orders'}) }}" class="nav-link {% if active_tab == 'orders' %}active{% endif %}">
+
+    <!-- ✅ Sidebar -->
+    <aside class="sidebar-fixed w-64 bg-white border-r border-gray-200 shadow-md flex flex-col">
+        <div class="px-6 py-6 border-b border-gray-200 sticky top-0 bg-white z-10">
+            <h1 class="text-2xl font-bold text-gray-800">Touch Up Admin</h1>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'orders'}) }}" 
+               class="sidebar-link {% if active_tab == 'orders' %}active{% endif %}">
                 📦 Orders
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'products'}) }}" class="nav-link {% if active_tab == 'products' %}active{% endif %}">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'products'}) }}" 
+               class="sidebar-link {% if active_tab == 'products' %}active{% endif %}">
                 🧴 Products
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'stock'}) }}" class="nav-link {% if active_tab == 'stock' %}active{% endif %}">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'stock'}) }}" 
+               class="sidebar-link {% if active_tab == 'stock' %}active{% endif %}">
                 📊 Stock
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'categories'}) }}" class="nav-link {% if active_tab == 'categories' %}active{% endif %}">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'categories'}) }}" 
+               class="sidebar-link {% if active_tab == 'categories' %}active{% endif %}">
                 🗂️ Categories
             </a>
         </nav>
+    </aside>
+
+    <!-- ✅ Main Content -->
+    <div class="flex-1 ml-64 flex flex-col min-h-screen">
+        
+
+        <!-- Flash Messages -->
+        <div class="max-w-4xl mx-auto mt-6 px-6 w-full">
+            {% for message in app.flashes('success') %}
+                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow-sm">
+                    <p class="font-semibold">✅ Success:</p>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md shadow-sm">
+                    <p class="font-semibold">❌ Error:</p>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Main Panel -->
+        <main class="flex-1 flex justify-center py-10 px-8 bg-gray-50 overflow-y-auto">
+            <section class="bg-white shadow-xl rounded-xl p-10 w-full max-w-5xl">
+                {% if active_tab == 'orders' %}
+                    {{ render(controller('App\\Controller\\OrderController::index')) }}
+                {% elseif active_tab == 'products' %}
+                    {{ render(controller('App\\Controller\\ProductController::index')) }}
+                {% elseif active_tab == 'stock' %}
+                    {{ render(controller('App\\Controller\\StockController::index')) }}
+                {% elseif active_tab == 'categories' %}
+                    {{ render(controller('App\\Controller\\CategoryController::index')) }}
+                {% else %}
+                    <p class="text-gray-500 text-center">Select a section from the sidebar to view management panels.</p>
+                {% endif %}
+            </section>
+        </main>
     </div>
 
-    <!-- ✅ Dashboard Section -->
-    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <section class="bg-white shadow-xl rounded-xl p-6 lg:p-8">
-            {% if active_tab == 'orders' %}
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">📦 Order Management</h2>
-                {{ render(controller('App\\Controller\\OrderController::index')) }}
-            {% elseif active_tab == 'products' %}
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">🧴 Product Management</h2>
-                {{ render(controller('App\\Controller\\ProductController::index')) }}
-            {% elseif active_tab == 'stock' %}
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">📊 Stock Management</h2>
-                {{ render(controller('App\\Controller\\StockController::index')) }}
-            {% elseif active_tab == 'categories' %}
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">🗂️ Category Management</h2>
-                {{ render(controller('App\\Controller\\CategoryController::index')) }}
-            {% else %}
-                <p class="text-gray-500 text-center">Select a tab above to view management sections.</p>
-            {% endif %}
-        </section>
-    </main>
-
-    <!-- ✅ JS Libraries -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+    <!-- ✅ Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.tailwindcss.js"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
 </body>
 </html>
-{% endblock %}

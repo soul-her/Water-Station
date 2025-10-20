@@ -1,11 +1,7 @@
-// public/js/admin.js
-
 document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ Admin JS Loaded");
 
-    // ===============================
-    // 1️⃣ Initialize DataTables
-    // ===============================
+    // Initialize DataTables
     const tables = document.querySelectorAll("table");
     if (tables.length > 0) {
         tables.forEach(table => {
@@ -22,54 +18,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                 });
             } catch (error) {
-                console.warn("⚠️ DataTable init failed on:", table, error);
+                console.warn("⚠️ DataTable init failed:", error);
             }
         });
     }
 
-    // ===============================
-    // 2️⃣ Sidebar Toggle (optional)
-    // ===============================
-    const sidebarToggle = document.getElementById("sidebarToggle");
-    const sidebar = document.getElementById("sidebar");
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("sidebar-collapsed");
-        });
-    }
-
-    // ===============================
-    // 3️⃣ Auto-hide flash messages
-    // ===============================
-    const flashMessages = document.querySelectorAll("[role='alert']");
-    if (flashMessages.length > 0) {
-        setTimeout(() => {
-            flashMessages.forEach(msg => {
-                msg.classList.add("opacity-0", "transition", "duration-700");
-                setTimeout(() => msg.remove(), 800);
-            });
-        }, 4000);
-    }
-
-    // ===============================
-    // 4️⃣ Smooth scroll to top on tab change
-    // ===============================
-    const navLinks = document.querySelectorAll(".nav-link");
-    navLinks.forEach(link => {
-        link.addEventListener("click", () => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-    });
-
-    // ===============================
-    // 5️⃣ Optional: Highlight active link manually
-    // ===============================
-    const currentUrl = window.location.href;
-    navLinks.forEach(link => {
-        if (currentUrl.includes(link.getAttribute("href"))) {
-            link.classList.add("active");
-        } else {
-            link.classList.remove("active");
+    // ✅ Force white search bar continuously
+    const fixSearchBar = () => {
+        const searchInput = document.querySelector('div.dataTables_filter input[type="search"]');
+        if (searchInput) {
+            searchInput.style.setProperty('background-color', '#ffffff', 'important');
+            searchInput.style.setProperty('color', '#111827', 'important');
+            searchInput.style.setProperty('border', '1px solid #d1d5db', 'important');
+            searchInput.style.setProperty('border-radius', '0.5rem', 'important');
+            searchInput.style.setProperty('padding', '0.5rem 0.75rem', 'important');
         }
-    });
+    };
+
+    // Run once on load
+    fixSearchBar();
+
+    // Reapply every second (temporary fix for redraws)
+    setInterval(fixSearchBar, 1000);
+
+    // Permanent fix: Observe DOM for redraws
+    const observer = new MutationObserver(fixSearchBar);
+    observer.observe(document.body, { childList: true, subtree: true });
 });
