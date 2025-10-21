@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Container{% endblock %}
+
+{% block body %}
+    <h1>Create new Container</h1>
+
+    {{ include('container/_form.html.twig') }}
+
+    <a href="{{ path('app_container_index') }}">back to list</a>
+{% endblock %}
