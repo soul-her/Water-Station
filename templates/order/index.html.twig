@@ -1,135 +1,90 @@
-
-
-{% block title %}Order Index{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <!-- DataTables CSS for Tailwind -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.tailwindcss.css">
-    <style>
-        /* Custom Tailwind styles for DataTables controls */
-        .dataTables_wrapper .dataTables_filter label,
-        .dataTables_wrapper .dataTables_length label,
-        .dataTables_wrapper .dataTables_info {
-            @apply text-sm text-gray-700;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            @apply p-2 rounded-lg transition duration-150 ease-in-out;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            @apply bg-indigo-600 text-white shadow-md;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-            @apply text-gray-400 cursor-not-allowed;
-        }
-
-        /* Fix for input fields */
-        .dataTables_wrapper input[type="search"],
-        .dataTables_wrapper select {
-            @apply shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block sm:text-sm border-gray-300 rounded-md;
-        }
-    </style>
-{% endblock %}
-
-{% block body %}
-<div class="p-6 bg-white shadow-xl rounded-xl max-w-7xl mx-auto">
+<div class="p-0">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-extrabold text-gray-800">📦 All Customer Orders</h2>
-
-        <div class="space-x-2">
-            <!-- 🏠 Back to Dashboard -->
-            <a href="{{ path('app_admin_dashboard') }}"
-               class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">
-                ← Back to Dashboard
-            </a>
-
-            <!-- ➕ Create New Order -->
-            <a href="{{ path('app_order_new') }}"
-               class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">
-                Create New Order
-            </a>
-        </div>
+        <h2 class="text-2xl font-semibold text-gray-800">Orders</h2>
+        <a href="{{ path('app_order_new') }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+            ➕ Create New Order
+        </a>
     </div>
 
-    <!-- DataTables wrapper -->
-    <div class="overflow-x-auto p-4">
-        <table id="ordersTable" class="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
+    <div class="overflow-x-auto">
+        <table id="ordersTable" class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                    <th scope="col" class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    <th class="px-3 py-3 text-left font-medium text-gray-500 uppercase">ID</th>
+                    <th class="px-3 py-3 text-left font-medium text-gray-500 uppercase">Name</th>
+                    <th class="px-3 py-3 text-left font-medium text-gray-500 uppercase">Contact</th>
+                    <th class="px-3 py-3 text-left font-medium text-gray-500 uppercase">Address</th>
+                    <th class="px-3 py-3 text-center font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-3 py-3 text-left font-medium text-gray-500 uppercase">Created At</th>
+                    <th class="px-3 py-3 text-center font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200">
-            {% for order in orders %}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ order.name }}</td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ order.contact }}</td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700 max-w-xs overflow-hidden text-ellipsis">{{ order.address }}</td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-center">
-                        <span class="px-3 inline-flex text-xs leading-5 font-semibold rounded-full
-                            {% if order.status == 'Pending' %}bg-yellow-100 text-yellow-800
-                            {% elseif order.status == 'Delivered' %}bg-green-100 text-green-800
-                            {% elseif order.status == 'Cancelled' %}bg-red-100 text-red-800
-                            {% else %}bg-blue-100 text-blue-800{% endif %}">
-                            {{ order.status }}
-                        </span>
-                    </td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-700">{{ order.createdAt|date('Y-m-d H:i') }}</td>
-                    <td class="px-3 py-3 whitespace-nowrap text-sm text-center space-x-2">
-                        <a href="{{ path('app_order_show', {id: order.id}) }}" class="text-blue-600 hover:text-blue-900 font-medium">Show</a>
-                        {% if order.status == 'Pending' %}
-                            <a href="{{ path('app_order_edit', {id: order.id}) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
-                            <form method="post" action="{{ path('order_cancel', {id: order.id}) }}" class="inline-block" onsubmit="return confirm('Are you sure you want to cancel Order #{{ order.id }}?')">
-                                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
-                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 text-xs font-semibold rounded-lg shadow transition duration-150 ease-in-out">Cancel</button>
-                            </form>
-                            {% include 'order/_delete_form.html.twig' %}
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders found.</td>
-                </tr>
-            {% endfor %}
+                {% for order in orders %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-3 py-3 text-gray-900">{{ order.id }}</td>
+                        <td class="px-3 py-3 text-gray-700">{{ order.name }}</td>
+                        <td class="px-3 py-3 text-gray-700">{{ order.contact }}</td>
+                        <td class="px-3 py-3 text-gray-700">{{ order.address }}</td>
+                        <td class="px-3 py-3 text-center">
+                            <span class="px-3 inline-flex text-xs font-semibold rounded-full
+                                {% if order.status == 'Pending' %}bg-yellow-100 text-yellow-800
+                                {% elseif order.status == 'Delivered' %}bg-green-100 text-green-800
+                                {% elseif order.status == 'Cancelled' %}bg-red-100 text-red-800
+                                {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td class="px-3 py-3 text-gray-700">{{ order.createdAt|date('Y-m-d H:i') }}</td>
+                        <td class="px-3 py-3 text-center space-x-2">
+                            <a href="{{ path('app_order_show', {id: order.id}) }}" class="text-blue-600 hover:text-blue-900 font-medium">Show</a>
+
+                            {% if order.status == 'Pending' %}
+                                <a href="{{ path('app_order_edit', {id: order.id}) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</a>
+
+                                <form method="post" action="{{ path('app_order_cancel', {id: order.id}) }}" class="inline-block" onsubmit="return confirm('Cancel order #{{ order.id }}?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ order.id) }}">
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 text-xs rounded-lg shadow">Cancel</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">No orders found.</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
-{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize DataTable
+    $('#ordersTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        language: {
+            search: "",
+            searchPlaceholder: "Search orders..."
+        }
+    });
 
-{% block javascripts %}
-    {{ parent() }}
-    <!-- jQuery (required for DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawR/Y2/232m/N/A6kzX24B51jW53/3yA6Wq0=" crossorigin="anonymous"></script>
-    <!-- DataTables Core JS -->
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-    <!-- DataTables Tailwind Integration JS -->
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.tailwindcss.js"></script>
+    // ✅ Make the search bar white + rounded (Tailwind style)
+    const styleSearchBar = () => {
+        const dtInput = document.querySelector('div.dataTables_wrapper .dataTables_filter input');
+        if (dtInput) {
+            dtInput.classList.add(
+                'bg-white', 'text-gray-900', 'border', 'border-gray-300',
+                'rounded-lg', 'px-3', 'py-2', 'focus:outline-none', 'focus:ring-2',
+                'focus:ring-blue-500', 'focus:border-blue-500', 'shadow-sm'
+            );
+        }
+    };
 
-    <script>
-        $(document).ready(function() {
-            $('#ordersTable').DataTable({
-                responsive: true,
-                order: [[5, 'desc']], // Sort by Created At column
-                columnDefs: [
-                    { targets: 6, orderable: false, searchable: false } // Disable sorting/searching on Actions
-                ],
-                language: {
-                    paginate: { previous: 'Prev', next: 'Next' }
-                }
-            });
-        });
-    </script>
-{% endblock %}
+    // Wait a bit to ensure DataTables finishes rendering
+    setTimeout(styleSearchBar, 300);
+});
+</script>

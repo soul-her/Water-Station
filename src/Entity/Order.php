@@ -34,17 +34,10 @@ class Order
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderProduct::class, cascade: ['persist', 'remove'])]
     private Collection $orderProducts;
 
-    /**
-     * @var Collection<int, Container>
-     */
-    #[ORM\OneToMany(targetEntity: Container::class, mappedBy: 'parentOrder')]
-    private Collection $containers;
-
     public function __construct()
     {
         $this->created_at = new \DateTimeImmutable();
         $this->orderProducts = new ArrayCollection();
-        $this->containers = new ArrayCollection();
     }
 
     // ✅ Getters and Setters
@@ -133,36 +126,6 @@ class Order
                 $orderProduct->setOrder(null);
             }
         }
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Container>
-     */
-    public function getContainers(): Collection
-    {
-        return $this->containers;
-    }
-
-    public function addContainer(Container $container): static
-    {
-        if (!$this->containers->contains($container)) {
-            $this->containers->add($container);
-            $container->setParentOrder($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContainer(Container $container): static
-    {
-        if ($this->containers->removeElement($container)) {
-            // set the owning side to null (unless already changed)
-            if ($container->getParentOrder() === $this) {
-                $container->setParentOrder(null);
-            }
-        }
-
         return $this;
     }
 }

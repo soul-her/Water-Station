@@ -14,18 +14,16 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/stock')]
 final class StockController extends AbstractController
 {
-    /**
-     * Renders the stock index list. 
-     * This now uses a fragment template designed to be embedded in another page (the Admin Dashboard).
-     */
-    #[Route(name: 'app_stock_index', methods: ['GET'])]
+    #[Route('/', name: 'app_stock_index', methods: ['GET'])]
     public function index(StockRepository $stockRepository): Response
     {
-        // CHANGED: Render 'stock/index_fragment.html.twig' instead of the full 'stock/index.html.twig'
+        // ✅ Render stock list fragment for embedding in the admin dashboard
         return $this->render('stock/index_fragment.html.twig', [
             'stocks' => $stockRepository->findAll(),
         ]);
     }
+
+    // ---------------------------------------------------------------------
 
     #[Route('/new', name: 'app_stock_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -37,8 +35,9 @@ final class StockController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($stock);
             $entityManager->flush();
-            $this->addFlash('success', 'Stock item created successfully.'); // Added flash message
-            return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
+
+            $this->addFlash('success', 'Stock item created successfully!');
+            return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'stocks']);
         }
 
         return $this->render('stock/new.html.twig', [
@@ -46,6 +45,8 @@ final class StockController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    // ---------------------------------------------------------------------
 
     #[Route('/{id}', name: 'app_stock_show', methods: ['GET'])]
     public function show(Stock $stock): Response
@@ -55,6 +56,8 @@ final class StockController extends AbstractController
         ]);
     }
 
+    // ---------------------------------------------------------------------
+
     #[Route('/{id}/edit', name: 'app_stock_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
     {
@@ -63,8 +66,9 @@ final class StockController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            $this->addFlash('success', 'Stock item updated successfully.'); // Added flash message
-            return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
+
+            $this->addFlash('success', 'Stock item updated successfully!');
+            return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'stocks']);
         }
 
         return $this->render('stock/edit.html.twig', [
@@ -73,17 +77,20 @@ final class StockController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_stock_delete', methods: ['POST'])]
+    // ---------------------------------------------------------------------
+
+    #[Route('/{id}/delete', name: 'app_stock_delete', methods: ['POST'])]
     public function delete(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$stock->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $stock->getId(), $request->request->get('_token'))) {
             $entityManager->remove($stock);
             $entityManager->flush();
-            $this->addFlash('success', 'Stock item deleted successfully.'); // Added flash message
+
+            $this->addFlash('success', 'Stock item deleted successfully!');
         } else {
-             $this->addFlash('error', 'Invalid CSRF token. Stock item not deleted.');
+            $this->addFlash('error', 'Invalid CSRF token. Stock item not deleted.');
         }
 
-        return $this->redirectToRoute('app_stock_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'stocks']);
     }
 }

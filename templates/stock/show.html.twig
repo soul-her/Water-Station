@@ -1,21 +1,53 @@
-{% extends 'base.html.twig' %}
-{% block title %}👁 View Stock | Touch Up{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁 View Stock | Touch Up</title>
 
-{% block body %}
-<main class="max-w-lg mx-auto py-16 px-6">
-    <div class="bg-white shadow-lg rounded-2xl p-8 border-t-4 border-blue-500">
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Stock Details</h1>
+    {# ✅ Tailwind CSS CDN #}
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center">
 
-        <ul class="space-y-4 text-gray-700">
-            <li><strong>ID:</strong> {{ stock.id }}</li>
-            <li><strong>Product:</strong> {{ stock.product ? stock.product.name : 'N/A' }}</li>
-            <li><strong>Quantity:</strong> <span class="text-blue-600 font-semibold">{{ stock.quantity }}</span></li>
-        </ul>
+    <main class="max-w-lg w-full mx-auto py-16 px-6">
+        <div class="bg-white shadow-xl rounded-2xl p-8 border-t-4 border-blue-500">
+            <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center gap-2">
+                👁 Stock Details
+            </h1>
 
-        <div class="mt-8 flex justify-between">
-            <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" class="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition">Edit</a>
-            <a href="{{ path('app_stock_index') }}" class="text-blue-600 hover:underline">← Back to list</a>
+            <ul class="space-y-4 text-gray-700 text-lg">
+                <li>
+                    <strong>ID:</strong>
+                    <span class="ml-2 text-gray-900">{{ stock.id }}</span>
+                </li>
+                <li>
+                    <strong>Product:</strong>
+                    <span class="ml-2 text-gray-900">{{ stock.product ? stock.product.name : 'N/A' }}</span>
+                </li>
+                <li>
+                    <strong>Quantity:</strong>
+                    <span class="ml-2 text-blue-600 font-semibold">{{ stock.quantity }}</span>
+                </li>
+            </ul>
+
+            <div class="mt-10 flex justify-between items-center">
+                <a href="{{ path('app_stock_index') }}" 
+                   class="bg-gray-200 text-gray-800 px-5 py-2 rounded-lg shadow hover:bg-gray-300 transition font-medium">
+                    ← Back
+                </a>
+
+                <div class="flex gap-3">
+                    <a href="{{ path('app_stock_edit', {'id': stock.id}) }}" 
+                       class="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition font-medium">
+                        ✏️ Edit
+                    </a>
+
+                    {% include 'stock/_delete_form.html.twig' with {'stock': stock} %}
+                </div>
+            </div>
         </div>
-    </div>
-</main>
-{% endblock %}
+    </main>
+
+</body>
+</html>

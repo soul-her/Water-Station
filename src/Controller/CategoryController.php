@@ -12,22 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/category')]
-// App\Controller\CategoryController.php
-
-// ... (imports)
-
 final class CategoryController extends AbstractController
 {
-    #[Route(name: 'app_category_index', methods: ['GET'])]
+    #[Route('/', name: 'app_category_index', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        // CHANGED: Renders the fragment template for embedding
+        // ✅ Render the fragment for embedding in Admin Dashboard
         return $this->render('category/index_fragment.html.twig', [
             'categories' => $categoryRepository->findAll(),
         ]);
     }
-    // ... other actions
 
+    // ---------------------------------------------------------------------
 
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -40,7 +36,8 @@ final class CategoryController extends AbstractController
             $entityManager->persist($category);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Category added successfully!');
+            return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'categories']);
         }
 
         return $this->render('category/new.html.twig', [
@@ -49,6 +46,8 @@ final class CategoryController extends AbstractController
         ]);
     }
 
+    // ---------------------------------------------------------------------
+
     #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
@@ -56,6 +55,8 @@ final class CategoryController extends AbstractController
             'category' => $category,
         ]);
     }
+
+    // ---------------------------------------------------------------------
 
     #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
@@ -66,7 +67,8 @@ final class CategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Category updated successfully!');
+            return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'categories']);
         }
 
         return $this->render('category/edit.html.twig', [
@@ -75,14 +77,20 @@ final class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
+    // ---------------------------------------------------------------------
+
+    #[Route('/{id}/delete', name: 'app_category_delete', methods: ['POST'])]
     public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->request->get('_token'))) {
             $entityManager->remove($category);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Category deleted successfully!');
+        } else {
+            $this->addFlash('error', 'Invalid CSRF token. Category not deleted.');
         }
 
-        return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_dashboard', ['tab' => 'categories']);
     }
 }

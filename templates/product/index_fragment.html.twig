@@ -1,51 +1,148 @@
 {# templates/product/index_fragment.html.twig #}
-{# Designed to be embedded (rendered) within the Admin Dashboard content block #}
 
-<div class="p-0">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-800">Products</h2>
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-semibold text-gray-800">Products</h2>
+    <a href="{{ path('app_product_new') }}"
+       class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 font-semibold transition duration-150">
+        ➕ Add New Product
+    </a>
+</div>
 
-        <a href="{{ path('app_product_new') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium transition duration-150 ease-in-out">
-            ➕ Add New Product
-        </a>
-    </div>
-
-    <div class="overflow-x-auto">
-        {# NOTE: If you decide to add DataTables later, you will need to add an ID to this table and include the JS script at the end of this fragment. #}
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead>
-                <tr class="bg-gray-50">
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">Image</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">Name</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">Price</th>
-                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                {% for product in products %}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-2 border">
+<div class="overflow-x-auto">
+    <table id="productsTable" class="min-w-full text-sm text-gray-700 divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="py-3 px-6 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                <th class="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            {% for product in products %}
+                <tr class="hover:bg-gray-50 transition duration-100">
+                    <td class="py-4 px-6">
                         {% if product.image %}
-                            <img src="{{ asset('uploads/products/' ~ product.image) }}" alt="{{ product.name }}" class="w-16 h-16 object-cover rounded shadow">
+                            <img src="{{ asset('uploads/products/' ~ product.image) }}"
+                                 alt="{{ product.name }}"
+                                 class="w-16 h-16 object-cover rounded shadow">
                         {% else %}
                             <span class="text-gray-400 italic text-sm">No image</span>
                         {% endif %}
                     </td>
-                    <td class="px-4 py-2 border font-medium text-gray-900">{{ product.name }}</td>
-                    <td class="px-4 py-2 border text-gray-700 font-semibold">₱{{ product.price|number_format(2) }}</td>
-                    <td class="px-4 py-2 border flex justify-center items-center gap-2 h-full">
-                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500 text-sm">View</a>
-                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">Edit</a>
-                        {# The delete form must be included here #}
+                    <td class="py-4 px-6 font-medium text-gray-900">{{ product.name }}</td>
+                    <td class="py-4 px-6 text-right font-semibold text-blue-600">
+                        ₱{{ product.price|number_format(2) }}
+                    </td>
+                    <td class="py-4 px-6 text-center space-x-3">
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}" class="text-blue-500 hover:text-blue-700">View</a>
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="text-green-600 hover:text-green-800">Edit</a>
                         {% include 'product/_delete_form.html.twig' with {'product': product} %}
                     </td>
                 </tr>
-                {% else %}
+            {% else %}
                 <tr>
-                    <td colspan="4" class="px-4 py-4 text-center text-gray-500 italic">No products found.</td>
+                    <td colspan="4" class="text-center py-8 text-gray-400 italic">No products available yet.</td>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
+<style>
+/* ✅ Consistent DataTables Styling with Tailwind */
+.dataTables_filter input {
+  background-color: white !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  outline: none !important;
+}
+.dataTables_filter input:focus {
+  box-shadow: 0 0 0 2px #2563eb33 !important;
+}
+.dataTables_wrapper .dataTables_length select {
+  background-color: white !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+.dataTables_wrapper .dataTables_paginate a {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.125rem;
+}
+.dataTables_wrapper .dataTables_paginate a.current {
+  background-color: #2563eb;
+  color: white !important;
+  border-color: #2563eb;
+}
+</style>
+
+<script>
+(function() {
+  const JQ = 'https://code.jquery.com/jquery-3.7.1.min.js';
+  const DT_JS = 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js';
+  const DT_CSS = 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css';
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadCss(href) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`link[href="${href}"]`)) return resolve();
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = href;
+      l.onload = resolve;
+      l.onerror = reject;
+      document.head.appendChild(l);
+    });
+  }
+
+  async function initProductTable() {
+    await loadCss(DT_CSS);
+    if (typeof window.jQuery === 'undefined') await loadScript(JQ);
+    const $ = window.jQuery;
+    if (!$.fn.DataTable) await loadScript(DT_JS);
+
+    if ($.fn.DataTable.isDataTable('#productsTable')) {
+      $('#productsTable').DataTable().destroy();
+    }
+
+    $('#productsTable').DataTable({
+      responsive: true,
+      order: [[1, 'asc']],
+      columnDefs: [{ targets: 3, orderable: false, searchable: false }],
+      language: {
+        search: "",
+        searchPlaceholder: "🔍 Search products...",
+        paginate: { previous: "← Prev", next: "Next →" }
+      },
+      pageLength: 10,
+      initComplete: function() {
+        const wrapper = $(this.api().table().container());
+        const dtInput = wrapper.find('div.dataTables_filter input');
+        dtInput.addClass(
+          'bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none ' +
+          'focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm'
+        ).attr('placeholder', '🔍 Search products...');
+        wrapper.find('.dataTables_filter').addClass('float-right mb-3');
+      }
+    });
+  }
+
+  initProductTable();
+})();
+</script>

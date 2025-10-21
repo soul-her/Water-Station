@@ -1,27 +1,42 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Category</title>
 
-{% block title %}Create Category{% endblock %}
+    {# ✅ Include Tailwind CSS CDN #}
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-{% block body %}
-<main class="max-w-3xl mx-auto mt-20 bg-white p-8 rounded-2xl shadow-lg">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">➕ Create New Category</h1>
+    <main class="max-w-3xl mx-auto mt-20 bg-white p-8 rounded-2xl shadow-lg w-full">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">➕ Create New Category</h1>
 
-    {{ form_start(form) }}
-        <div class="mb-4">
-            {{ form_label(form.name, 'Category Name', {'label_attr': {'class': 'block text-gray-700 font-medium mb-2'}}) }}
-            {{ form_widget(form.name, {'attr': {'class': 'w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.name) }}
-        </div>
+        {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_label(form.name, 'Category Name', {
+                    'label_attr': {'class': 'block text-gray-700 font-medium mb-2'}
+                }) }}
+                {{ form_widget(form.name, {
+                    'attr': {
+                        'class': 'w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                    }
+                }) }}
+                {{ form_errors(form.name) }}
+            </div>
 
-        <button type="submit" 
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-            Save
-        </button>
-    {{ form_end(form) }}
+            <button type="submit" 
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                Save
+            </button>
+        {{ form_end(form) }}
 
-    <a href="{{ path('app_category_index') }}" 
-       class="inline-block mt-6 text-gray-600 hover:underline">
-        ← Back to list
-    </a>
-</main>
-{% endblock %}
+        <a href="{{ path('app_category_index') }}" 
+           class="inline-block mt-6 text-gray-600 hover:underline">
+            ← Back to list
+        </a>
+    </main>
+
+</body>
+</html>

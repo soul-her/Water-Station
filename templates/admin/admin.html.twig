@@ -1,36 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
+<html lang="en" class="h-full bg-blue-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Touch Up</title>
+    <title>Touch Up Admin Dashboard</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-  
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.tailwindcss.css">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+
     <style>
+        body { font-family: 'Inter', sans-serif; }
+
         /* Sidebar Links */
         .sidebar-link {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            color: #374151;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            color: white;
             transition: all 0.2s ease;
         }
         .sidebar-link:hover {
-            background-color: #e5e7eb;
-            color: #1d4ed8;
-        }
-        .sidebar-link.active {
-            background-color: #2563eb;
+            background-color: #374151;
             color: white;
         }
+        .sidebar-link.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79,70,229,0.3), 0 2px 4px -2px rgba(79,70,229,0.3);
+        }
 
-        /* Fixed Sidebar */
+        /* Sidebar Fixed */
         .sidebar-fixed {
             position: fixed;
             top: 0;
@@ -40,69 +49,86 @@
             z-index: 50;
         }
 
-        /* Sidebar Scrollbar */
-        .sidebar-fixed::-webkit-scrollbar {
-            width: 8px;
+        /* DataTables white search bar */
+        div.dataTables_wrapper .dataTables_filter input {
+            background-color: white !important;
+            color: #111827 !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            outline: none;
+            width: 250px;
         }
-        .sidebar-fixed::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+        div.dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.3);
+        }
+
+        div.dataTables_wrapper select {
+            border-radius: 0.5rem !important;
+            padding: 0.25rem 0.5rem !important;
+            border: 1px solid #d1d5db !important;
         }
     </style>
 </head>
 
-<body class="bg-gray-100 flex">
+<body class="bg-blue-100 flex">
     {% set active_tab = app.request.query.get('tab', 'orders') %}
 
     <!-- ✅ Sidebar -->
-    <aside class="sidebar-fixed w-64 bg-white border-r border-gray-200 shadow-md flex flex-col">
-        <div class="px-6 py-6 border-b border-gray-200 sticky top-0 bg-white z-10">
-            <h1 class="text-2xl font-bold text-gray-800">Touch Up Admin</h1>
+    <aside class="sidebar-fixed w-64 bg-gray-900 border-r border-gray-700 shadow-2xl flex flex-col">
+        <div class="px-6 py-8 border-b border-gray-700 sticky top-0 bg-gray-900 z-10">
+            <h1 class="text-3xl font-extrabold text-indigo-400 tracking-tight">Touch Up Admin</h1>
         </div>
 
-        <nav class="flex-1 px-4 py-6 space-y-2">
-            <a href="{{ path('app_admin_dashboard', {'tab': 'orders'}) }}" 
+        <nav class="flex-1 px-4 py-8 space-y-3">
+            <a href="{{ path('app_admin_dashboard', {'tab': 'orders'}) }}"
                class="sidebar-link {% if active_tab == 'orders' %}active{% endif %}">
-                📦 Orders
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i> Orders
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'products'}) }}" 
+            <a href="{{ path('app_admin_dashboard', {'tab': 'products'}) }}"
                class="sidebar-link {% if active_tab == 'products' %}active{% endif %}">
-                🧴 Products
+                <i data-lucide="tag" class="w-5 h-5"></i> Products
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'stock'}) }}" 
+            <a href="{{ path('app_admin_dashboard', {'tab': 'stock'}) }}"
                class="sidebar-link {% if active_tab == 'stock' %}active{% endif %}">
-                📊 Stock
+                <i data-lucide="warehouse" class="w-5 h-5"></i> Stock
             </a>
-            <a href="{{ path('app_admin_dashboard', {'tab': 'categories'}) }}" 
+            <a href="{{ path('app_admin_dashboard', {'tab': 'categories'}) }}"
                class="sidebar-link {% if active_tab == 'categories' %}active{% endif %}">
-                🗂️ Categories
+                <i data-lucide="folder-open" class="w-5 h-5"></i> Categories
             </a>
         </nav>
     </aside>
 
     <!-- ✅ Main Content -->
     <div class="flex-1 ml-64 flex flex-col min-h-screen">
-        
 
         <!-- Flash Messages -->
-        <div class="max-w-4xl mx-auto mt-6 px-6 w-full">
+        <div class="max-w-6xl mx-auto mt-6 px-6 w-full">
             {% for message in app.flashes('success') %}
-                <div class="bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow-sm">
-                    <p class="font-semibold">✅ Success:</p>
-                    <p>{{ message }}</p>
+                <div class="flex items-start bg-green-50 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg shadow-md">
+                    <i data-lucide="check-circle" class="w-5 h-5 mr-3 mt-1 text-green-600"></i>
+                    <div>
+                        <p class="font-bold text-green-800">Success:</p>
+                        <p class="text-sm">{{ message }}</p>
+                    </div>
                 </div>
             {% endfor %}
             {% for message in app.flashes('error') %}
-                <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md shadow-sm">
-                    <p class="font-semibold">❌ Error:</p>
-                    <p>{{ message }}</p>
+                <div class="flex items-start bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg shadow-md">
+                    <i data-lucide="x-circle" class="w-5 h-5 mr-3 mt-1 text-red-600"></i>
+                    <div>
+                        <p class="font-bold text-red-800">Error:</p>
+                        <p class="text-sm">{{ message }}</p>
+                    </div>
                 </div>
             {% endfor %}
         </div>
 
         <!-- Main Panel -->
-        <main class="flex-1 flex justify-center py-10 px-8 bg-gray-50 overflow-y-auto">
-            <section class="bg-white shadow-xl rounded-xl p-10 w-full max-w-5xl">
+        <main class="flex-1 flex justify-center py-12 px-8 bg-blue-100 overflow-y-auto">
+            <section class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-6xl">
                 {% if active_tab == 'orders' %}
                     {{ render(controller('App\\Controller\\OrderController::index')) }}
                 {% elseif active_tab == 'products' %}
@@ -120,8 +146,9 @@
 
     <!-- ✅ Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.tailwindcss.js"></script>
-    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    </script>
 </body>
 </html>
